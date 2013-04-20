@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp"
+	android:clickable="true"
+	style="@style/AppTheme.GridItem"
+>
+    
+    
+    <TextView android:id="@android:id/text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+         
+	/>
+    
+
+</RelativeLayout>
