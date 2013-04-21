@@ -1,22 +1,22 @@
 package com.deadline.autoloadinglist;
 
-import java.util.WeakHashMap;
-
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 public class GridAdapter extends BaseAdapter {
 	
-	private static final String TAG = GridAdapter.class.getName();
+	@SuppressWarnings("unused")
+    private static final String TAG = GridAdapter.class.getName();
 	
-	private static final LinearLayout.LayoutParams childLayoutParams =  new LinearLayout.LayoutParams(
+	private static final LinearLayout.LayoutParams childLayoutParams = new LinearLayout.LayoutParams(
             LayoutParams.MATCH_PARENT,
             LayoutParams.MATCH_PARENT, 1.0f);
 	
@@ -25,8 +25,6 @@ public class GridAdapter extends BaseAdapter {
 	volatile private int mColumns;
 
 	private ListView mListView;
-
-	private WeakHashMap<Long, View> viewCache = new WeakHashMap<Long, View>();
 
 	public GridAdapter(ListView list, int columns, Adapter wrapedAdapter) {
 		this.mListView      = list;
@@ -74,7 +72,6 @@ public class GridAdapter extends BaseAdapter {
 		final ViewGroup line;
 		if (convertView == null) {
 			line = line();
-			Log.d(TAG, "line=null");
 		} else {
 			line = (ViewGroup) convertView;
 			for(int j=0; j<line.getChildCount(); j++)
@@ -85,10 +82,10 @@ public class GridAdapter extends BaseAdapter {
 		int count = mWrapedAdapter.getCount();
 		while ( i<mColumns ) {
 			
+			//TODO: Rewrite these 2x2 options to 3x1
 			View child;
 			if ( position*mColumns + i < count ) {
-				// TODO: Cache items instead of recreating it every time
-				View  old = line.getChildAt(i);
+				View old = line.getChildAt(i);
 				if (old == null) {
 					child = mWrapedAdapter.getView(position*mColumns +i, null /*put old view here*/, line);
 					line.addView( child, childLayoutParams );
@@ -98,7 +95,7 @@ public class GridAdapter extends BaseAdapter {
 				}
 				
 			} else {
-				View  old = line.getChildAt(i);
+				View old = line.getChildAt(i);
 				if (old == null) {
 					child = mWrapedAdapter.getView(0, null , line);
 					child.setVisibility(View.INVISIBLE);
@@ -112,16 +109,20 @@ public class GridAdapter extends BaseAdapter {
 			i++;
 		}
 		
-		//line.postInvalidate();
+		if (position == getCount()-1) { // We're showing last line
+			if (parent instanceof ListView) {
+				Toast.makeText(parent.getContext(), "ListView", Toast.LENGTH_SHORT).show();
+				/*ProgressBar progress = new ProgressBar(parent.getContext());
+				progress.setLayoutParams(new LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT));				
+				((ListView)parent).addFooterView(progress, null, false);*/
+			}
+			
+		}
 		
 		return line;
     }
 	
-	
-	private View getChildView(int position) {
-		return mWrapedAdapter.getView( position, null, null);
-	}
-	
+		
 	private ViewGroup line() {
 		final LinearLayout bucket = new LinearLayout(mListView.getContext());
 		bucket.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.WRAP_CONTENT));

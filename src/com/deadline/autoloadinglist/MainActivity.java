@@ -7,8 +7,10 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
@@ -34,7 +36,13 @@ public class MainActivity extends Activity {
 			}
 		};
 		
+		
+		TextView xtt = new TextView(this);
+		xtt.setText("Hello footer!");
+		xtt.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		
 		ListView list = (ListView) findViewById(android.R.id.list);
+		list.addFooterView(xtt);
 		
 		mGridAdapter = new GridAdapter(list, 2, srcAdapter);
 		
