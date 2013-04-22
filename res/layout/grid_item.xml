@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="5dp"
 	android:clickable="true"
 	style="@style/AppTheme.GridItem"
@@ -16,7 +15,7 @@
         android:textAppearance="@android:style/TextAppearance.Large"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
-         
+        android:textIsSelectable="false"
 	/>
     
 

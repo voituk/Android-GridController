@@ -4,39 +4,52 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Adapter;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.Toast;
 
-public class GridAdapter extends BaseAdapter {
+public class GridListAdapter extends BaseAdapter {
 	
 	@SuppressWarnings("unused")
-    private static final String TAG = GridAdapter.class.getName();
+    private static final String TAG = GridListAdapter.class.getName();
 	
 	private static final LinearLayout.LayoutParams childLayoutParams = new LinearLayout.LayoutParams(
             LayoutParams.MATCH_PARENT,
             LayoutParams.MATCH_PARENT, 1.0f);
 	
-	private Adapter mWrapedAdapter;
-	
+	private Adapter      mWrapedAdapter;
+	private ListView     mListView;
 	volatile private int mColumns;
 
-	private ListView mListView;
+	
+	private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (mListView == null)
+				return;
+			final OnItemClickListener listener = mListView.getOnItemClickListener();
+			if (listener != null)
+				listener.onItemClick(mListView, v, -1, -1); //FIXME: Pass real position & id values there 
+			
+		}
+	};
+	
 
-	public GridAdapter(ListView list, int columns, Adapter wrapedAdapter) {
+	public GridListAdapter(ListView list, int columns, Adapter wrapedAdapter) {
 		this.mListView      = list;
 		this.mColumns       = columns;
 	    this.mWrapedAdapter = wrapedAdapter;
-	    
     }
+	
 	
 	public void setColumnsCount(int columns) {
 		this.mColumns = columns;
 		notifyDataSetChanged();
 	}
 
+	
 	@Override
     public int getCount() {
 		final int count = mWrapedAdapter.getCount();
@@ -54,6 +67,7 @@ public class GridAdapter extends BaseAdapter {
     public long getItemId(int position) {
 		return 0;
     }
+	
 	
 	@Override
 	public boolean areAllItemsEnabled() {
@@ -82,6 +96,7 @@ public class GridAdapter extends BaseAdapter {
 		while ( i<mColumns ) {
 			
 			//TODO: Rewrite these 2x2 options to 3x1
+			//TODO: Maybe to add FrameLayout around each item
 			View child;
 			if ( position*mColumns + i < count ) {
 				View old = line.getChildAt(i);
@@ -90,8 +105,9 @@ public class GridAdapter extends BaseAdapter {
 					line.addView( child, childLayoutParams );
 				} else {
 					child = mWrapedAdapter.getView(position*mColumns +i, old /*put old view here*/, line);
-					old.setVisibility(View.VISIBLE);
+					child.setVisibility(View.VISIBLE);
 				}
+				child.setOnClickListener(this.mOnClickListener);
 				
 			} else {
 				View old = line.getChildAt(i);
@@ -106,16 +122,6 @@ public class GridAdapter extends BaseAdapter {
 			}
 			
 			i++;
-		}
-		
-		if (position == getCount()-1) { // We're showing last line
-			if (parent instanceof ListView) {
-				Toast.makeText(parent.getContext(), "ListView", Toast.LENGTH_SHORT).show();
-				/*ProgressBar progress = new ProgressBar(parent.getContext());
-				progress.setLayoutParams(new LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT));				
-				((ListView)parent).addFooterView(progress, null, false);*/
-			}
-			
 		}
 		
 		return line;

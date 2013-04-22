@@ -10,15 +10,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
 
-	private GridAdapter mGridAdapter;
+	private GridListAdapter mGridAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +34,7 @@ public class MainActivity extends FragmentActivity {
         }
 
 		
-		ArrayAdapter<Integer> srcAdapter = new ArrayAdapter<Integer>(this, R.layout.grid_item, android.R.id.text1 , items) {
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-			    System.out.println("convertView["+position+"]=" + convertView);
-			    return super.getView(position, convertView, parent);
-			}
-		};
+		ArrayAdapter<Integer> srcAdapter = new ArrayAdapter<Integer>(this, R.layout.grid_item, android.R.id.text1 , items);
 		
 		
 		TextView xtt = new TextView(this);
@@ -47,8 +43,13 @@ public class MainActivity extends FragmentActivity {
 		
 		ListView list = (ListView) findViewById(android.R.id.list);
 		list.addFooterView(xtt);
+		list.setOnItemClickListener(new OnItemClickListener() {
+			@Override public void onItemClick(AdapterView<?> list, View view, int position, long id) {
+				Toast.makeText(list.getContext(), view.toString(), Toast.LENGTH_SHORT).show();
+            }
+		});
 		
-		mGridAdapter = new GridAdapter(list, 2, srcAdapter);
+		mGridAdapter = new GridListAdapter(list, 2, srcAdapter);
 		
 		list.setAdapter(mGridAdapter);
 		
