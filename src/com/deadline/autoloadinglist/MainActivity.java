@@ -68,8 +68,6 @@ public class MainActivity extends FragmentActivity {
 	    }
 	    
 	    hideActionBarOnRotate();
-	    
-	    
 	}
 	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
