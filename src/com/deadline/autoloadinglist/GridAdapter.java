@@ -6,10 +6,9 @@ import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class GridAdapter extends BaseAdapter {
 	

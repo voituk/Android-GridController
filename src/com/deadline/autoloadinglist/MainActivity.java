@@ -2,9 +2,13 @@ package com.deadline.autoloadinglist;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
@@ -12,7 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
 	private GridAdapter mGridAdapter;
 
@@ -56,10 +60,27 @@ public class MainActivity extends Activity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		System.out.println("MainActivity.onConfigurationChanged()");
 	    super.onConfigurationChanged(newConfig);
-	    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+	    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 	    	mGridAdapter.setColumnsCount(3);
-	    else 
+	    } else { 
 	    	mGridAdapter.setColumnsCount(2);
+	    	
+	    }
+	    
+	    hideActionBarOnRotate();
+	    
+	    
+	}
+	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void hideActionBarOnRotate() {
+	    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB /* TODO: && Screen in SMALL */) {
+	    	if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+	    		getActionBar().hide();
+	    	} else {
+	    		getActionBar().show();
+	    	}
+	    }
 	}
 
 
