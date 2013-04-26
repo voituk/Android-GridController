@@ -1,5 +1,8 @@
 package com.deadline.autoloadinglist;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -75,7 +78,7 @@ public class MainActivity extends FragmentActivity {
 				if (item == null)
 					return v;
 				
-				((TextView)v.findViewById(android.R.id.text1)).setText(String.format("%04d",  item.intValue()*10 ));
+				((TextView)v.findViewById(android.R.id.text1)).setText(String.format("-= %d =-",  item.intValue() ));
 				v.setTag(item);
 				
 				return v;
@@ -88,13 +91,14 @@ public class MainActivity extends FragmentActivity {
 				handler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						finishLoadData(false);
+						List<Integer> list = new ArrayList<Integer>();
 						
-						Integer[] arr = new Integer[10];
-						for (int i=0; i<arr.length; i++)
-							arr[i] = i+1;
+						int cnt = getItemsCount();
 						
-						add(arr);
+						for (int i=cnt; i<cnt+10; i++)
+							list.add(i+1);
+						
+						finishLoadData(list, getItemsCount()+10 >=50 );
 						
 					}
 				}, 3000);

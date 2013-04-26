@@ -1,6 +1,7 @@
 package com.deadline.autoloadinglist;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Service;
 import android.view.LayoutInflater;
@@ -84,7 +85,7 @@ abstract public class AutoLoadingGridAdapter<T> extends BaseAdapter {
 	}
 	
 	
-	synchronized public void add(T it) {
+	/*synchronized public void add(T it) {
 		list.add(it);
 		notifyDataSetChanged();
 	}
@@ -94,9 +95,21 @@ abstract public class AutoLoadingGridAdapter<T> extends BaseAdapter {
 		for(T it: its)
 			list.add(it);
 		notifyDataSetChanged();
+	}*/
+	
+	public synchronized int getItemsCount() {
+		return list.size();
 	}
 	
+	synchronized public T getFirstItem() {
+		return list.size() > 0 ? list.get(0) : null;
+	}
 	
+	synchronized public T getLastItem() {
+		return list.size() > 0 ? list.get(list.size()-1) : null;
+	}
+	
+	// TODO: ALL Adapter-related methods should be hidden into internal Adapter
 	@Override
     synchronized public int getCount() {
 		final int count = list.size();
@@ -192,9 +205,11 @@ abstract public class AutoLoadingGridAdapter<T> extends BaseAdapter {
 		loadData();
 	}
 	
-	protected void finishLoadData(boolean fullyLoaded) {
+	protected void finishLoadData(List<T> data, boolean fullyLoaded) {
 		progress.setVisibility(View.GONE);
 		state = fullyLoaded ? LoadingState.LOADED : LoadingState.IDLE;
+		list.addAll(data);
+		notifyDataSetChanged();
 	}
 	
 	
