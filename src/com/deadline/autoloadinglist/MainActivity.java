@@ -59,18 +59,24 @@ public class MainActivity extends FragmentActivity {
 		
 		list.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override public void onItemClick(AdapterView<?> list, View arg1, int position, long id) {
+			@Override public void onItemClick(AdapterView<?> list, View view, int position, long id) {
+				Integer it = (Integer)view.getTag();
+				if (it == null)
+					return;
 				
+				Toast.makeText(list.getContext(), "Click " + it.intValue(), Toast.LENGTH_SHORT).show();
             }
 		});
 		
 		mGridAdapter = new AutoLoadingGridAdapter<Integer>(list, progress, 2) {
 			@Override
-            protected View bindView(int position, View convertView, ViewGroup parent) {
-				
+            protected View bindView(Integer item, View convertView, ViewGroup parent) {
 				View v = convertView == null ? mInflater.inflate(R.layout.grid_item, null, false) : convertView;
+				if (item == null)
+					return v;
 				
-				((TextView)v.findViewById(android.R.id.text1)).setText(String.format("%04d", position+1));
+				((TextView)v.findViewById(android.R.id.text1)).setText(String.format("%04d",  item.intValue()*10 ));
+				v.setTag(item);
 				
 				return v;
             }

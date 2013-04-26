@@ -3,7 +3,6 @@ package com.deadline.autoloadinglist;
 import java.util.ArrayList;
 
 import android.app.Service;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +74,7 @@ abstract public class AutoLoadingGridAdapter<T> extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 	
-	abstract protected View bindView(final int position, final View convertView, final ViewGroup parent);
+	abstract protected View bindView(final T item, final View convertView, final ViewGroup parent);
 	
 	abstract protected void loadData();
 
@@ -109,13 +108,13 @@ abstract public class AutoLoadingGridAdapter<T> extends BaseAdapter {
 	
 	@Override
     public Object getItem(int position) {
-	    return null;
+	    return list.get(position);
     }
 
 	
 	@Override
     public long getItemId(int position) {
-		return 0;
+		return position;
     }
 	
 	
@@ -154,22 +153,22 @@ abstract public class AutoLoadingGridAdapter<T> extends BaseAdapter {
 			if ( wrapedPosition < count ) {
 				View reuse = line.getChildAt(i);
 				if (reuse == null) {
-					child = bindView(wrapedPosition, null/*create new view here*/, line); //TODO: line VS mListView???
+					child = bindView(list.get(wrapedPosition),  null/*create new view here*/, line); //TODO: line VS mListView???
 					line.addView( child, childLayoutParams );
 				} else {
-					child = bindView(wrapedPosition, reuse /*put old view here*/, line);  //TODO: line VS mListView???
+					child = bindView(list.get(wrapedPosition), reuse /*put old view here*/, line);  //TODO: line VS mListView???
 					child.setVisibility(View.VISIBLE);
 				}
 				child.setOnClickListener(mOnClickListener);
 				
 			} else {
-				View old = line.getChildAt(i);
-				if (old == null) {
-					child = bindView(0, null , line);  //TODO: line VS mListView???
+				View reuse = line.getChildAt(i);
+				if (reuse == null) {
+					child = bindView(null, null , line);  //TODO: line VS mListView???
 					child.setVisibility(count>0 ? View.INVISIBLE : View.GONE);
 					line.addView( child, childLayoutParams );
 				} else {
-					old.setVisibility(count>0 ? View.INVISIBLE : View.GONE);
+					reuse.setVisibility(count>0 ? View.INVISIBLE : View.GONE);
 				}
 			}
 			
