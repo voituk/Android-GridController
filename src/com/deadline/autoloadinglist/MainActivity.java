@@ -1,26 +1,22 @@
 package com.deadline.autoloadinglist;
 
-import java.util.ArrayList;
-
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.AbsListView.LayoutParams;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
 
-	private GridListAdapter mGridAdapter;
+	private AutoLoadingGridAdapter<Integer> mGridAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +24,7 @@ public class MainActivity extends FragmentActivity {
 		setContentView(R.layout.activity_main);
 		
 		
-        ArrayList<Integer> items = new ArrayList<Integer>();
+        /*ArrayList<Integer> items = new ArrayList<Integer>();
         for(int i=1; i < 147; i++){
         	items.add(i);
         }
@@ -41,7 +37,7 @@ public class MainActivity extends FragmentActivity {
 		xtt.setText("Hello footer!");
 		xtt.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		
-		ListView list = (ListView) findViewById(android.R.id.list);
+		
 		list.addFooterView(xtt);
 		list.setOnItemClickListener(new OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> list, View view, int position, long id) {
@@ -51,7 +47,53 @@ public class MainActivity extends FragmentActivity {
 		
 		mGridAdapter = new GridListAdapter(list, 2, srcAdapter);
 		
-		list.setAdapter(mGridAdapter);
+		list.setAdapter(mGridAdapter);*/
+		
+		
+		View progress = getLayoutInflater().inflate(R.layout.list_footer, null);
+		
+		final Handler handler = new Handler();
+		
+		
+		ListView list = (ListView) findViewById(android.R.id.list);
+		
+		list.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override public void onItemClick(AdapterView<?> list, View arg1, int position, long id) {
+				
+            }
+		});
+		
+		mGridAdapter = new AutoLoadingGridAdapter<Integer>(list, progress, 2) {
+			@Override
+            protected View bindView(int position, View convertView, ViewGroup parent) {
+				
+				View v = convertView == null ? mInflater.inflate(R.layout.grid_item, null, false) : convertView;
+				
+				((TextView)v.findViewById(android.R.id.text1)).setText(String.format("%04d", position+1));
+				
+				return v;
+            }
+
+			@Override
+            protected void loadData() {
+				Toast.makeText(MainActivity.this, "loadData", Toast.LENGTH_SHORT).show();
+				
+				handler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						finishLoadData(false);
+						
+						Integer[] arr = new Integer[10];
+						for (int i=0; i<arr.length; i++)
+							arr[i] = i+1;
+						
+						add(arr);
+						
+					}
+				}, 3000);
+            }
+		};
 		
 		// Fire config changes
 		onConfigurationChanged(getResources().getConfiguration());

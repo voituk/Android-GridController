@@ -19,20 +19,43 @@ public class GridListAdapter extends BaseAdapter {
             LayoutParams.MATCH_PARENT,
             LayoutParams.MATCH_PARENT, 1.0f);
 	
-	private Adapter      mWrapedAdapter;
-	private ListView     mListView;
+	final private Adapter      mWrapedAdapter;
+	final private ListView     mListView;
 	volatile private int mColumns;
-
+	
+	/*private static class OnGridItemClickListener implements View.OnClickListener {
+		
+		final private ListView mList;
+		final private View mItem;
+		final private int position;
+		final private long id;
+		
+		public OnGridItemClickListener(final ListView listView, final View v, final int position, final long id) {
+			this.mList    = listView;
+			this.mItem    = v;
+			this.position = position;
+			this.id       = id;
+		}
+		
+		@Override
+        public void onClick(View v) {
+			if (mList == null)
+				return;
+			final OnItemClickListener listener = mList.getOnItemClickListener();
+			if (listener != null)
+				listener.onItemClick(mList, mItem, position, id); //FIXME: Pass real position & id values there 			
+        }
+		
+	}*/
 	
 	private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
 		@Override
-		public void onClick(View v) {
-			if (mListView == null)
+		public void onClick(final View v) {
+			if (mListView == null || v == null)
 				return;
 			final OnItemClickListener listener = mListView.getOnItemClickListener();
 			if (listener != null)
-				listener.onItemClick(mListView, v, -1, -1); //FIXME: Pass real position & id values there 
-			
+				listener.onItemClick(mListView, v, -1, -1);
 		}
 	};
 	
@@ -98,16 +121,17 @@ public class GridListAdapter extends BaseAdapter {
 			//TODO: Rewrite these 2x2 options to 2x1
 			//TODO: Maybe to add FrameLayout around each item
 			View child;
-			if ( position*mColumns + i < count ) {
+			int wrapedPosition = position*mColumns + i;
+			if ( wrapedPosition < count ) {
 				View old = line.getChildAt(i);
 				if (old == null) {
-					child = mWrapedAdapter.getView(position*mColumns +i, null /*create new view here*/, line);
+					child = mWrapedAdapter.getView(wrapedPosition, null /*create new view here*/, line);
 					line.addView( child, childLayoutParams );
 				} else {
-					child = mWrapedAdapter.getView(position*mColumns +i, old /*put old view here*/, line);
+					child = mWrapedAdapter.getView(wrapedPosition, old /*put old view here*/, line);
 					child.setVisibility(View.VISIBLE);
 				}
-				child.setOnClickListener(this.mOnClickListener);
+				child.setOnClickListener(mOnClickListener);
 				
 			} else {
 				View old = line.getChildAt(i);
