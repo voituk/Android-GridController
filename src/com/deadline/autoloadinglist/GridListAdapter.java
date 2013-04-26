@@ -95,13 +95,13 @@ public class GridListAdapter extends BaseAdapter {
 		int count = mWrapedAdapter.getCount();
 		while ( i<mColumns ) {
 			
-			//TODO: Rewrite these 2x2 options to 3x1
+			//TODO: Rewrite these 2x2 options to 2x1
 			//TODO: Maybe to add FrameLayout around each item
 			View child;
 			if ( position*mColumns + i < count ) {
 				View old = line.getChildAt(i);
 				if (old == null) {
-					child = mWrapedAdapter.getView(position*mColumns +i, null /*put old view here*/, line);
+					child = mWrapedAdapter.getView(position*mColumns +i, null /*create new view here*/, line);
 					line.addView( child, childLayoutParams );
 				} else {
 					child = mWrapedAdapter.getView(position*mColumns +i, old /*put old view here*/, line);
